@@ -41,8 +41,13 @@ const VideoInject: React.FC<VideoInjectProps> = ({ onSelect }) => {
   }
 
   const handleSelect = () => {
-    if (embedUrl) {
-      onSelect(embedUrl)
+    if (inputUrl) {
+      try {
+        const returnUrlObj = new URL(inputUrl)
+        onSelect(returnUrlObj.origin + returnUrlObj.pathname)
+      } catch (error) {
+        onSelect(inputUrl)
+      }
     }
   }
 
@@ -69,7 +74,11 @@ const VideoInject: React.FC<VideoInjectProps> = ({ onSelect }) => {
         <Button className='h-8' onClick={handleRun}>
           运行
         </Button>
-        {embedUrl && <Button className='h-8' onClick={handleSelect}>使用资源</Button>}
+        {embedUrl && (
+          <Button className='h-8' onClick={handleSelect}>
+            使用资源
+          </Button>
+        )}
       </div>
       {!!errorTips && <div>{errorTips}</div>}
 
