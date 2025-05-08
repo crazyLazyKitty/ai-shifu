@@ -84,7 +84,7 @@ const Editor: React.FC<EditorProps> = ({
 
   const handleSelectResource = useCallback(
     (resourceUrl: string) => {
-      const textToInsert = ` ${resourceUrl} `
+      const textToInsert = ` ${resourceUrl}`
       insertTextAsTag(textToInsert)
       setDialogOpen(false)
     },

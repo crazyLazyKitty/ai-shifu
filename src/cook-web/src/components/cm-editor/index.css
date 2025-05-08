@@ -2,30 +2,14 @@
 .tag-image,
 .tag-video {
     cursor: pointer;
-    /* border: 1px solid #e5484d; */
     border-radius: 3px;
-    /* color: #F56C6C; */
     padding: 0 6px;
-
     &:hover {
-        background-color: antiquewhite;
-
+        background-color: #9333ea6b;
         .tag-icon {
             visibility: visible;
         }
 
-    }
-}
-
-.tag-image {
-    &:hover {
-        background-color: #67C23A;
-    }
-}
-
-.tag-video {
-    &:hover {
-        background-color: #409EFF;
     }
 }
 
