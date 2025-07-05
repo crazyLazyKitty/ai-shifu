@@ -35,9 +35,12 @@
   },
   "cm-editor": {
     "image": "图片",
-    "input-slash-to-insert-content": "输入\"/\"快速插入内容",
+    "input-slash-to-insert-content": "默认输入 AI 提示词，输入\"/\"唤起更多",
     "variable": "变量",
-    "video": "视频"
+    "video": "视频",
+    "fixed-text": "固定文本",
+    "user-operation": "用户操作",
+    "dividing": "分界线"
   },
   "common": {
     "all": "全部",

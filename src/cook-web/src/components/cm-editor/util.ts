@@ -22,6 +22,8 @@ const biliVideoContextRegexp =
 const agiImgContextRegexp =
   /<span\s+data-tag="image"[^>]*data-url="([^"]*)"[^>]*data-title="([^"]*)"[^>]*data-scale="([^"]*)"[^>]*>([^<]+)<\/span>/gi
 
+const dividingRegexp = /<div\s+data-tag="dividing"[^>]*><\/div>/gi
+
 const getProfileKeyListFromContent = (content: string): string[] => {
   if (!content) return []
   const keys = new Set<string>()
@@ -89,7 +91,13 @@ class PlaceholderWidget extends WidgetType {
     }
   }
 
-  toDOM () {
+  buildDividingDom(){
+    const container = document.createElement('div')
+    container.className = this.styleClass
+    return container
+  }
+
+  buildCommonDom(){
     const container = document.createElement('span')
     container.className = this.styleClass
     const span = document.createElement('span')
@@ -129,6 +137,13 @@ class PlaceholderWidget extends WidgetType {
     container.appendChild(span)
     container.appendChild(icon)
     return container
+  }
+
+  toDOM () {
+    if(this.type === SelectedOption.Dividing){
+      return this.buildDividingDom()
+    }
+    return this.buildCommonDom()
   }
 
   ignoreEvent () {
@@ -185,6 +200,22 @@ const biliUrlMatcher = new MatchDecorator({
         },
         'tag-video',
         SelectedOption.Video,
+        view
+      )
+    })
+})
+
+const dividingMatcher = new MatchDecorator({
+  regexp: dividingRegexp,
+  decoration: (match, view) =>
+    Decoration.replace({
+      widget: new PlaceholderWidget(
+        match[0],
+        {
+          tag: 'dividing'
+        },
+        'tag-dividing',
+        SelectedOption.Dividing,
         view
       )
     })
@@ -247,6 +278,25 @@ const videoPlaceholders = ViewPlugin.fromClass(
   }
 )
 
+const dividingPlaceholders = ViewPlugin.fromClass(
+  class {
+    placeholders: DecorationSet
+    constructor (view: EditorView) {
+      this.placeholders = dividingMatcher.createDeco(view)
+    }
+    update (update: ViewUpdate) {
+      this.placeholders = dividingMatcher.updateDeco(update, this.placeholders)
+    }
+  },
+  {
+    decorations: instance => instance.placeholders,
+    provide: plugin =>
+      EditorView.atomicRanges.of(view => {
+        return view.plugin(plugin)?.placeholders || Decoration.none
+      })
+  }
+)
+
 function createSlashCommands (
   onSelectOption: (selectedOption: SelectedOption) => void
 ) {
@@ -273,6 +323,12 @@ function createSlashCommands (
       to: word.to,
       options: [
         {
+          label: t('cm-editor.fixed-text'),
+          apply: (view, _, from, to) => {
+            handleSelect(view, _, from, to, SelectedOption.FixedText)
+          }
+        },
+        {
           label: t('cm-editor.variable'),
           apply: (view, _, from, to) => {
             handleSelect(view, _, from, to, SelectedOption.Profile)
@@ -289,6 +345,18 @@ function createSlashCommands (
           apply: (view, _, from, to) => {
             handleSelect(view, _, from, to, SelectedOption.Video)
           }
+        },
+        {
+          label: t('cm-editor.user-operation'),
+          apply: (view, _, from, to) => {
+            handleSelect(view, _, from, to, SelectedOption.UserOperation)
+          }
+        },
+        {
+          label: t('cm-editor.dividing'),
+          apply: (view, _, from, to) => {
+            handleSelect(view, _, from, to, SelectedOption.Dividing)
+          }
         }
       ],
       filter: false
@@ -302,6 +370,7 @@ export {
   variablePlaceholders,
   imgPlaceholders,
   videoPlaceholders,
+  dividingPlaceholders,
   createSlashCommands,
   parseContentInfo,
   getProfileKeyListFromContent

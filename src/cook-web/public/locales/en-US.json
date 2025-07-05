@@ -35,9 +35,12 @@
   },
   "cm-editor": {
     "image": "Image",
-    "input-slash-to-insert-content": "Input Slash to Insert Content",
+    "input-slash-to-insert-content": "Default AI prompt input. Enter\"/\"to evoke more options",
     "variable": "Variable",
-    "video": "Video"
+    "video": "Video",
+    "fixed-text": "Fixed Text",
+    "user-operation": "User Operation",
+    "dividing": "Dividing Line"
   },
   "common": {
     "all": "All",

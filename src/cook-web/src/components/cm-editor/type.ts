@@ -2,6 +2,9 @@ enum SelectedOption {
   Video = 'video',
   Image = 'Image',
   Profile = 'Profile',
+  FixedText = 'FixedText',
+  UserOperation = 'UserOperation',
+  Dividing = 'Dividing',
   Empty = ''
 }
 interface IEditorContext {

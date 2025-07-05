@@ -27,6 +27,10 @@
     /* visibility: hidden; */
 }
 
+.tag-dividing{
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.25);
+}
+
 /* label */
 .cm-tooltip.cm-tooltip-autocomplete {
     border: 1px solid #e5e5e5;

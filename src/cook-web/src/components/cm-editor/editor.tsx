@@ -17,6 +17,7 @@ import {
   variablePlaceholders,
   imgPlaceholders,
   videoPlaceholders,
+  dividingPlaceholders,
   createSlashCommands,
   parseContentInfo,
   getProfileKeyListFromContent
@@ -48,12 +49,27 @@ const Editor: React.FC<EditorProps> = ({
     selectedOption: SelectedOption.Empty,
     setSelectedOption,
     dialogOpen,
-    setDialogOpen,
+    setDialogOpen
   }
 
   const onSelectedOption = useCallback((selectedOption: SelectedOption) => {
+    setSelectedOption(selectedOption);
+    if (selectedOption === SelectedOption.Dividing) {
+      handleSelectDividing()
+      return
+    }
+
+    if (selectedOption === SelectedOption.FixedText) {
+      return
+    }
+
+    if (selectedOption === SelectedOption.UserOperation) {
+      return
+    }
+
+    // image video profile
     setDialogOpen(true)
-    setSelectedOption(selectedOption)
+    
   }, [])
 
   const insertText = useCallback(
@@ -116,7 +132,6 @@ const Editor: React.FC<EditorProps> = ({
       resourceTitle?: string
       resourceScale?: number
     }) => {
-      // const textToInsert = resourceUrl
       const textToInsert = `<span data-tag="image" data-url="${resourceUrl}" data-title="${resourceTitle}" data-scale="${resourceScale}">${resourceTitle}</span>`
       if (selectContentInfo?.type === SelectedOption.Image) {
         deleteSelectedContent()
@@ -141,7 +156,6 @@ const Editor: React.FC<EditorProps> = ({
       resourceUrl: string
       resourceTitle: string
     }) => {
-      // const textToInsert = resourceUrl
       const textToInsert = `<span data-tag="video" data-url="${resourceUrl}" data-title="${resourceTitle}">${resourceTitle}</span>`
       if (selectContentInfo?.type === SelectedOption.Video) {
         deleteSelectedContent()
@@ -157,6 +171,11 @@ const Editor: React.FC<EditorProps> = ({
     },
     [insertText, selectedOption]
   )
+
+  const handleSelectDividing = useCallback(() => {
+    const textToInsert = `<div data-tag="dividing"></div>`
+    insertText(textToInsert)
+  }, [insertText, selectedOption])
 
   const slashCommandsExtension = useCallback(() => {
     return autocompletion({
@@ -192,7 +211,7 @@ const Editor: React.FC<EditorProps> = ({
   useEffect(() => {
     const handleWrap = (e: any) => {
       if (e.detail.view === editorViewRef.current) {
-        handleTagClick(e);
+        handleTagClick(e)
       }
     }
     window.addEventListener('globalTagClick', handleWrap)
@@ -213,6 +232,7 @@ const Editor: React.FC<EditorProps> = ({
                 variablePlaceholders,
                 imgPlaceholders,
                 videoPlaceholders,
+                dividingPlaceholders,
                 EditorView.updateListener.of(update => {
                   handleEditorUpdate(update.view)
                 })
@@ -230,7 +250,11 @@ const Editor: React.FC<EditorProps> = ({
               theme='light'
               minHeight='2rem'
               onChange={(value: string) => {
-                onChange?.(value, getProfileKeyListFromContent(value), isEdit || false)
+                onChange?.(
+                  value,
+                  getProfileKeyListFromContent(value),
+                  isEdit || false
+                )
               }}
               onBlur={onBlur}
             />
